@@ -17,9 +17,10 @@ MonoBehaviour:
     m_Bits: 8
   maxWalkSpeed: 25
   maxMovementVeocity: 5
-  lookSensitivity: 1.5
+  lookSensitivity: 0.1
   jumpForce: 8.858894
   maxJumpHeight: 4
+  jumpBuffer: 0.25
   colliderMaxDistance: 2
   offset: {x: 0, y: -0.2, z: 0}
   ShowDebug: 1

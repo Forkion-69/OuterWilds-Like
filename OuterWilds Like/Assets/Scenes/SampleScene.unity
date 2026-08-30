@@ -637,6 +637,7 @@ MonoBehaviour:
   MoveStats: {fileID: 11400000, guid: 0f3715df25c4d124db00518cfab320ab, type: 2}
   _bodyCollider: {fileID: 1044178686}
   _feetCollider: {fileID: 1287834653}
+  playerState: 0
 --- !u!54 &825051743
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -912,6 +913,7 @@ GameObject:
   - component: {fileID: 1923220223}
   - component: {fileID: 1923220222}
   - component: {fileID: 1923220227}
+  - component: {fileID: 1923220228}
   m_Layer: 0
   m_Name: FP Camera
   m_TagString: Untagged
@@ -934,7 +936,7 @@ MonoBehaviour:
   NoiseProfile: {fileID: 11400000, guid: 46965f9cbaf525742a6da4c2172a99cd, type: 2}
   PivotOffset: {x: 0, y: 0, z: 0}
   AmplitudeGain: 0.5
-  FrequencyGain: 0.1
+  FrequencyGain: 0.5
   m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!114 &1923220223
 MonoBehaviour:
@@ -948,7 +950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d54399b04b4fa48a73e121d4937dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachinePanTilt
-  ReferenceFrame: 0
+  ReferenceFrame: 1
   RecenterTarget: 0
   PanAxis:
     Value: 0
@@ -963,7 +965,7 @@ MonoBehaviour:
   TiltAxis:
     Value: 0
     Center: 0
-    Range: {x: -70, y: 70}
+    Range: {x: -50, y: 50}
     Wrap: 0
     Recentering:
       Enabled: 0
@@ -1074,7 +1076,7 @@ MonoBehaviour:
       Enabled: 1
       Input:
         InputAction: {fileID: -1354717662129867630, guid: ebc4c3d86a32b5b4b9897337b959e0aa, type: 3}
-        Gain: 50
+        Gain: 75
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
@@ -1082,6 +1084,19 @@ MonoBehaviour:
         DecelTime: 0
   PlayerIndex: -1
   AutoEnableInputs: 1
+--- !u!114 &1923220228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923220220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6280f0b94c7dd8b4c9818f09b2cba707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MouseLookDelta
+  playerStats: {fileID: 11400000, guid: 0f3715df25c4d124db00518cfab320ab, type: 2}
 --- !u!1 &2138893785
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 
@@ -8,6 +9,7 @@ public class Player : MonoBehaviour
     public PlayerStats MoveStats;
     public CapsuleCollider _bodyCollider;
     public BoxCollider _feetCollider;
+    public PlayerState playerState;
     
     private Rigidbody rb;
 
@@ -19,11 +21,37 @@ public class Player : MonoBehaviour
 
     //Jump Vars
     private bool _isGrounded;
+    private float _jumpBufferTimer;
+
 
     //collision vars
     private RaycastHit _groundBoxCasthit;
 
+    #region States
 
+    public enum PlayerState
+    {
+        _Unknown,
+        _isStationary,
+        _isMoving,
+        _isthrusting,
+        _isfalling,
+    }
+
+    private void StateCheck()
+    {
+        if (InputHandler.MoveVector != Vector2.zero && _isGrounded)
+        {
+            _isMoving = true;
+            playerState = PlayerState._isMoving;
+
+        }else{_isMoving = false;playerState = PlayerState._isStationary;}
+        //Debug.Log("The State of the player movement is " + _isMoving );
+    }
+
+    #endregion
+
+    #region Gizmos
     private void OnDrawGizmos()
     {
         if(MoveStats.ShowDebug)
@@ -36,8 +64,9 @@ public class Player : MonoBehaviour
         Gizmos.DrawWireCube(_castOrigin + MoveStats.offset ,_castSize);
         }
     }
+    #endregion
 
-
+    #region Runtime
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -46,8 +75,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        CheckMoving();
+        StateCheck();
         CollisionChecks();
+        JumpCheck();
     }
 
     private void FixedUpdate()
@@ -55,6 +85,8 @@ public class Player : MonoBehaviour
         Move();
         // Debug.Log(rb.linearVelocity.magnitude);
     }
+
+    #endregion
 
     #region Movement
 
@@ -70,22 +102,39 @@ public class Player : MonoBehaviour
         rb.maxLinearVelocity = MoveStats.maxMovementVeocity;
     }
 
-    private void CheckMoving()
-    {
-        if (InputHandler.MoveVector != Vector2.zero && _isGrounded)
-        {
-            _isMoving = true;
-
-        }else{_isMoving = false;}
-        //Debug.Log("The State of the player movement is " + _isMoving );
-    }
-
     #endregion
 
     #region Jumping
 
+    private void JumpCheck()
+    {
+        JumpTimer();
+    }
     
+    private void JumpTimer()
+    {
+        float _jumpBufferTime = MoveStats.jumpBuffer;
     
+        if(InputHandler.jumpWasHeld && _isGrounded)
+        {
+            _jumpBufferTimer -= Time.deltaTime;
+            // _jumpBufferTimer = math.clamp(_jumpBufferTimer,0.1f,_jumpBufferTime);
+            Debug.Log("Loading it up " + _jumpBufferTimer);
+
+            if(InputHandler.jumpWasReleased && _jumpBufferTimer > 0.1f)
+            {
+                Debug.Log("NormalJump");
+                _jumpBufferTimer = _jumpBufferTime;
+            }
+            else if (InputHandler.jumpWasReleased &&_jumpBufferTimer < 0.1f)
+            {
+                Debug.Log("Highest Jump");
+                _jumpBufferTimer = _jumpBufferTime;
+            }
+        }
+
+
+    }
     #endregion
 
     #region Collision Checks

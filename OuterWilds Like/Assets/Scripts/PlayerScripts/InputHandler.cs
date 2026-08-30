@@ -8,6 +8,7 @@ public class InputHandler : MonoBehaviour
 
     public static Vector2 MoveVector;
     public static Vector2 LookVector;
+    public static Vector2 LookMouseVector;
     public static float ThrustAxis;
 
     public static bool jumpWasPressed;
@@ -25,6 +26,7 @@ public class InputHandler : MonoBehaviour
 
         _moveAction = playerInput.actions["Move"];
         _lookAction = playerInput.actions["Look"];
+        
         _jumpAction = playerInput.actions["Jump"];
         _thrustAction = playerInput.actions["Thrust"];
         
@@ -34,12 +36,13 @@ public class InputHandler : MonoBehaviour
     {
         MoveVector = _moveAction.ReadValue<Vector2>();
         LookVector = _lookAction.ReadValue<Vector2>();
+        LookMouseVector = Mouse.current.delta.ReadValue();
+        
         ThrustAxis = _thrustAction.ReadValue<float>();
 
         jumpWasPressed = _jumpAction.WasPressedThisFrame();
         jumpWasHeld = _jumpAction.IsPressed();
         jumpWasReleased = _jumpAction.WasReleasedThisFrame();
-
 
     }
 
