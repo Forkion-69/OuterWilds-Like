@@ -1,4 +1,7 @@
+
+using System.ComponentModel.Design.Serialization;
 using Unity.Mathematics;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -15,12 +18,15 @@ public class Player : MonoBehaviour
 
     //movement variables
     private bool _isMoving;
+    private Vector3 _currentVelocity;
 
     //Camera variables
     private Camera _playerCamera;
 
     //Jump Vars
     private bool _isGrounded;
+    private bool _jumpBuffering;
+    public float _adjustedJumpHeight;
     private float _jumpBufferTimer;
 
 
@@ -34,8 +40,8 @@ public class Player : MonoBehaviour
         _Unknown,
         _isStationary,
         _isMoving,
-        _isthrusting,
-        _isfalling,
+        _isThrusting,
+        _isFalling,
     }
 
     private void StateCheck()
@@ -44,9 +50,11 @@ public class Player : MonoBehaviour
         {
             _isMoving = true;
             playerState = PlayerState._isMoving;
+        }
+        else if(InputHandler.ThrustAxis != 0)
+            {playerState = PlayerState._isThrusting;} 
+        else{_isMoving = false; playerState = PlayerState._isStationary;}
 
-        }else{_isMoving = false;playerState = PlayerState._isStationary;}
-        //Debug.Log("The State of the player movement is " + _isMoving );
     }
 
     #endregion
@@ -77,13 +85,14 @@ public class Player : MonoBehaviour
     {
         StateCheck();
         CollisionChecks();
-        JumpCheck();
+        JumpTimer();
     }
 
     private void FixedUpdate()
     {
         Move();
-        // Debug.Log(rb.linearVelocity.magnitude);
+        JumpCheck();
+        ThrustMechanics();
     }
 
     #endregion
@@ -95,11 +104,19 @@ public class Player : MonoBehaviour
         Vector3 move = _playerCamera.transform.forward * InputHandler.MoveVector.y + _playerCamera.transform.right * InputHandler.MoveVector.x;
         move.y = 0;
 
+        _currentVelocity  = rb.linearVelocity;
+
+        _currentVelocity.x = math.clamp(_currentVelocity.x,-MoveStats.maxMovementVeocity.x,MoveStats.maxMovementVeocity.x);
+        _currentVelocity.z = math.clamp(_currentVelocity.z,-MoveStats.maxMovementVeocity.z,MoveStats.maxMovementVeocity.z);
+        // AHHHH I SPELT VELOCITY WRONG WHILE DEFINING
+
         if (_isMoving)
         {
             rb.AddForce(move.normalized * MoveStats.maxWalkSpeed * Time.fixedDeltaTime,ForceMode.VelocityChange);
         }
-        rb.maxLinearVelocity = MoveStats.maxMovementVeocity;
+        
+        rb.linearVelocity = _currentVelocity;
+        
     }
 
     #endregion
@@ -108,35 +125,54 @@ public class Player : MonoBehaviour
 
     private void JumpCheck()
     {
-        JumpTimer();
+        if(InputHandler.jumpWasReleased && _isGrounded && _jumpBuffering == false)
+        {
+            MoveStats.maxJumpHeight = _adjustedJumpHeight * _jumpBufferTimer;
+
+            MoveStats.CalculateValues(MoveStats.maxJumpHeight);
+
+            rb.AddForce(new Vector3(0,MoveStats.jumpForce,0),ForceMode.Impulse);
+        }
     }
     
     private void JumpTimer()
-    {
+    {   
         float _jumpBufferTime = MoveStats.jumpBuffer;
-    
-        if(InputHandler.jumpWasHeld && _isGrounded)
-        {
-            _jumpBufferTimer -= Time.deltaTime;
-            // _jumpBufferTimer = math.clamp(_jumpBufferTimer,0.1f,_jumpBufferTime);
-            Debug.Log("Loading it up " + _jumpBufferTimer);
 
-            if(InputHandler.jumpWasReleased && _jumpBufferTimer > 0.1f)
+        if (InputHandler.jumpWasPressed && _jumpBuffering != true)
+        {
+            _jumpBufferTimer = 0f;
+            _jumpBuffering = true;
+        }
+    
+        if(_jumpBuffering && _isGrounded)
+        {
+            _jumpBufferTimer += Time.deltaTime; Debug.Log("Timer running : " + _jumpBufferTimer);
+            _jumpBufferTimer = math.clamp(_jumpBufferTimer,-0.1f,_jumpBufferTime);
+
+            if(InputHandler.jumpWasReleased)
             {
-                Debug.Log("NormalJump");
-                _jumpBufferTimer = _jumpBufferTime;
-            }
-            else if (InputHandler.jumpWasReleased &&_jumpBufferTimer < 0.1f)
-            {
-                Debug.Log("Highest Jump");
-                _jumpBufferTimer = _jumpBufferTime;
+                _jumpBuffering = false;
+                return;
             }
         }
-
-
+        
     }
     #endregion
 
+    #region JetPack and stuff
+
+    private void ThrustMechanics()
+    {   float _thrustAxis = InputHandler.ThrustAxis;
+
+        if(playerState == PlayerState._isThrusting && _thrustAxis > 0)
+            rb.AddForce(transform.up * MoveStats.thrustForce,ForceMode.Acceleration);
+        else if(playerState == PlayerState._isThrusting && _thrustAxis < 0)
+            rb.AddForce(-transform.up * MoveStats.thrustForce,ForceMode.Acceleration);
+    }
+
+    #endregion
+ 
     #region Collision Checks
     private void CollisionChecks()
     {

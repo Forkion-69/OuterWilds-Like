@@ -638,7 +638,6 @@ MonoBehaviour:
   _bodyCollider: {fileID: 1044178686}
   _feetCollider: {fileID: 1287834653}
   playerState: 0
-  _adjustedJumpHeight: 10
 --- !u!54 &825051743
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -16,11 +16,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   maxWalkSpeed: 25
-  maxMovementVeocity: 5
+  maxMovementVeocity: {x: 5, y: 15, z: 5}
   lookSensitivity: 0.1
-  jumpForce: 8.858894
-  maxJumpHeight: 4
-  jumpBuffer: 0.25
+  jumpForce: 4.9522724
+  maxJumpHeight: 1.25
+  jumpBuffer: 0.125
   colliderMaxDistance: 2
   offset: {x: 0, y: -0.2, z: 0}
-  ShowDebug: 1
+  thrustForce: 15
+  ShowDebug: 0
