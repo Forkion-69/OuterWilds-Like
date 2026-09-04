@@ -14,11 +14,15 @@ public class InputHandler : MonoBehaviour
     public static bool jumpWasPressed;
     public static bool jumpWasHeld;
     public static bool jumpWasReleased;
+    public static bool RightButtonIsHeld;
 
     private InputAction _moveAction;
     private InputAction _lookAction;
     private InputAction _jumpAction;
     private InputAction _thrustAction;
+    private InputAction _rotateAction;
+
+    public static string ActiveControlsScheme;
 
     private void Awake()
     {
@@ -29,7 +33,10 @@ public class InputHandler : MonoBehaviour
         
         _jumpAction = playerInput.actions["Jump"];
         _thrustAction = playerInput.actions["Thrust"];
+        _rotateAction = playerInput.actions["Rotate"];
         
+        ActiveControlsScheme = playerInput.currentControlScheme;
+        Debug.Log(ActiveControlsScheme);
     }
 
     private void Update()
@@ -43,6 +50,9 @@ public class InputHandler : MonoBehaviour
         jumpWasPressed = _jumpAction.WasPressedThisFrame();
         jumpWasHeld = _jumpAction.IsPressed();
         jumpWasReleased = _jumpAction.WasReleasedThisFrame();
+        RightButtonIsHeld = _rotateAction.IsPressed();
+
+        
 
     }
 

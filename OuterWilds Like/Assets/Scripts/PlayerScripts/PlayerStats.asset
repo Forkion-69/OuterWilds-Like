@@ -23,5 +23,12 @@ MonoBehaviour:
   jumpBuffer: 0.125
   colliderMaxDistance: 2
   offset: {x: 0, y: -0.2, z: 0}
-  thrustForce: 15
+  thrustForce: 8
+  boosterForce: 20
+  boosterfuel: 2
+  fuelLerpSpeed: 0.25
+  refillLerpSpeed: 0.15
+  airWalkSpeed: 12
+  rotationSpeed: 25
+  _isRotating: 0
   ShowDebug: 0

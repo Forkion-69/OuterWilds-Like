@@ -41,6 +41,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Rotate",
+                    "type": "Button",
+                    "id": "79c3208f-9b61-4748-beb4-f6847cbc0672",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -50,7 +59,7 @@
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";GamePad",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -72,7 +81,7 @@
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KeyBoard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -83,7 +92,7 @@
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KeyBoard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -94,7 +103,7 @@
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KeyBoard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -105,7 +114,7 @@
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KeyBoard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -116,7 +125,7 @@
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";GamePad",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -127,7 +136,7 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KeyBoard",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -149,7 +158,7 @@
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";GamePad",
                     "action": "Thrust",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -160,7 +169,7 @@
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";GamePad",
                     "action": "Thrust",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -182,7 +191,7 @@
                     "path": "<Keyboard>/k",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KeyBoard",
                     "action": "Thrust",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -193,7 +202,7 @@
                     "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KeyBoard",
                     "action": "Thrust",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -204,8 +213,30 @@
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";GamePad;KeyBoard",
+                    "groups": ";GamePad",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "52602946-a31f-437d-b248-11ab580311f6",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyBoard",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "27c3bf0e-d0ea-4747-9825-6fbac94822b7",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";GamePad",
+                    "action": "Rotate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

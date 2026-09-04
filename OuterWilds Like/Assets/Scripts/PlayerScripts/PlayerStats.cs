@@ -1,3 +1,4 @@
+using System;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -22,6 +23,15 @@ public class PlayerStats : ScriptableObject
 
     [Header("Suit")]
     [Range(1f,100f)] public float thrustForce;
+    [Range(1f,100f)] public float boosterForce;
+    [Range(0.1f, 25f)] public float boosterfuel;
+    [Range(0.001f,20f)] public float fuelLerpSpeed;
+    [Range(0.001f,20f)] public float refillLerpSpeed;
+    [Range(0.1f, 100f)] public float airWalkSpeed;
+
+    [Header("Rotation")]
+    [Range(-180f,180f)] public float rotationSpeed;
+    public bool _isRotating;
     
 
     [Header("Debug")]

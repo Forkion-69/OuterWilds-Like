@@ -1,7 +1,4 @@
-
-using System.ComponentModel.Design.Serialization;
 using Unity.Mathematics;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -29,6 +26,10 @@ public class Player : MonoBehaviour
     public float _adjustedJumpHeight;
     private float _jumpBufferTimer;
 
+    //Booster & Thruster
+    private float _boosterBar;
+
+    public bool _isRotating;
 
     //collision vars
     private RaycastHit _groundBoxCasthit;
@@ -41,6 +42,7 @@ public class Player : MonoBehaviour
         _isStationary,
         _isMoving,
         _isThrusting,
+        _isBoosting,
         _isFalling,
     }
 
@@ -52,8 +54,22 @@ public class Player : MonoBehaviour
             playerState = PlayerState._isMoving;
         }
         else if(InputHandler.ThrustAxis != 0)
-            {playerState = PlayerState._isThrusting;} 
+        {
+            playerState = PlayerState._isThrusting;
+            if(InputHandler.jumpWasHeld)
+                playerState = PlayerState._isBoosting;
+        }
+        else if(rb.linearVelocity.y < -0.1f)
+            playerState = PlayerState._isFalling;
         else{_isMoving = false; playerState = PlayerState._isStationary;}
+
+        if (InputHandler.RightButtonIsHeld)
+        {
+            _isRotating = true;
+            
+        }else{_isRotating = false;}
+
+        MoveStats._isRotating = _isRotating;
 
     }
 
@@ -75,17 +91,20 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Runtime
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         _playerCamera = Camera.main;
+        _boosterBar = MoveStats.boosterfuel;
     }
 
     private void Update()
     {
         StateCheck();
-        CollisionChecks();
-        JumpTimer();
+        CollisionChecksAndTimers();
+
+        RotationHandler();
     }
 
     private void FixedUpdate()
@@ -113,6 +132,10 @@ public class Player : MonoBehaviour
         if (_isMoving)
         {
             rb.AddForce(move.normalized * MoveStats.maxWalkSpeed * Time.fixedDeltaTime,ForceMode.VelocityChange);
+        }
+        else if(playerState == PlayerState._isThrusting || playerState == PlayerState._isBoosting || !_isGrounded)
+        {
+            rb.AddForce(move.normalized * MoveStats.airWalkSpeed * Time.fixedDeltaTime,ForceMode.Acceleration);
         }
         
         rb.linearVelocity = _currentVelocity;
@@ -147,7 +170,8 @@ public class Player : MonoBehaviour
     
         if(_jumpBuffering && _isGrounded)
         {
-            _jumpBufferTimer += Time.deltaTime; Debug.Log("Timer running : " + _jumpBufferTimer);
+            _jumpBufferTimer += Time.deltaTime; 
+            // Debug.Log("Timer running : " + _jumpBufferTimer);
             _jumpBufferTimer = math.clamp(_jumpBufferTimer,-0.1f,_jumpBufferTime);
 
             if(InputHandler.jumpWasReleased)
@@ -165,18 +189,64 @@ public class Player : MonoBehaviour
     private void ThrustMechanics()
     {   float _thrustAxis = InputHandler.ThrustAxis;
 
-        if(playerState == PlayerState._isThrusting && _thrustAxis > 0)
+        if(playerState == PlayerState._isThrusting && _thrustAxis > 0 )
             rb.AddForce(transform.up * MoveStats.thrustForce,ForceMode.Acceleration);
+        else if(playerState == PlayerState._isBoosting && _thrustAxis > 0 && _boosterBar > 0)
+        {
+            rb.AddForce(transform.up * MoveStats.boosterForce,ForceMode.Acceleration);
+        }
         else if(playerState == PlayerState._isThrusting && _thrustAxis < 0)
             rb.AddForce(-transform.up * MoveStats.thrustForce,ForceMode.Acceleration);
     }
 
+    private void BoostTimer()
+    {
+        if(playerState == PlayerState._isBoosting)
+            {
+                _boosterBar -= Time.deltaTime;
+            }
+        else{_boosterBar = Mathf.Lerp(_boosterBar,MoveStats.boosterfuel,MoveStats.refillLerpSpeed);}
+
+        _boosterBar = Mathf.Clamp(_boosterBar,-0.1f,100f);
+
+        // Debug.Log("Fuel is " + _boosterBar);
+    }
+
     #endregion
  
+    #region Rotation
+
+    private void RotationHandler()
+    {
+        Vector2 mouseDelta;
+
+        if(InputHandler.ActiveControlsScheme == "KeyBoard")
+            mouseDelta = InputHandler.LookMouseVector;
+        else if(InputHandler.ActiveControlsScheme == "GamePad")
+            mouseDelta = InputHandler.LookVector;
+        else
+            mouseDelta = InputHandler.LookMouseVector;
+
+        float rotationZ = mouseDelta.x * MoveStats.rotationSpeed;
+        float rotationX = mouseDelta.y * MoveStats.rotationSpeed;
+
+        if(InputHandler.RightButtonIsHeld && !_isGrounded)
+        {
+            transform.Rotate(rotationX,0,rotationZ);
+            Debug.Log("shi should ne spinning");
+        }
+
+    }
+
+    #endregion
+
+
     #region Collision Checks
-    private void CollisionChecks()
+    private void CollisionChecksAndTimers()
     {
         IsGrounded();
+        JumpTimer();
+        BoostTimer();
     }
 
     private void IsGrounded()
