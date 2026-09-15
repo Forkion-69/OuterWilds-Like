@@ -33,6 +33,10 @@ public class Player : MonoBehaviour
 
     //collision vars
     private RaycastHit _groundBoxCasthit;
+    private RaycastHit _sphereCastHit;
+
+    //Rotation Vars
+    private bool _isAdjusting;
 
     #region States
 
@@ -86,6 +90,7 @@ public class Player : MonoBehaviour
         Gizmos.color = Color.red;
 
         Gizmos.DrawWireCube(_castOrigin + MoveStats.offset ,_castSize);
+        Gizmos.DrawWireSphere(_bodyCollider.bounds.center,MoveStats.gyroSphereRadius);
         }
     }
     #endregion
@@ -230,11 +235,19 @@ public class Player : MonoBehaviour
         float rotationZ = mouseDelta.x * MoveStats.rotationSpeed;
         float rotationX = mouseDelta.y * MoveStats.rotationSpeed;
 
-        if(InputHandler.RightButtonIsHeld && !_isGrounded)
+        if (_isAdjusting)
         {
-            transform.Rotate(rotationX,0,rotationZ);
-            Debug.Log("shi should ne spinning");
+            transform.up = Vector3.Lerp(transform.up, Vector3.up,MoveStats.adjustingSpeed);
         }
+
+        if(InputHandler.RightButtonIsHeld && (!_isGrounded || !_isAdjusting))
+        {  
+            transform.Rotate(rotationX,0,rotationZ);
+            // Debug.Log("shi should ne spinning");
+        }
+
+
+        
 
     }
 
@@ -247,6 +260,7 @@ public class Player : MonoBehaviour
         IsGrounded();
         JumpTimer();
         BoostTimer();
+        ProximityCheck();
     }
 
     private void IsGrounded()
@@ -262,6 +276,20 @@ public class Player : MonoBehaviour
         }else{_isGrounded = true;}
 
         // Debug.Log("player is grounded = " + _isGrounded);
+    }
+
+    private void ProximityCheck()
+    {
+        Vector3 _castOrigin = _bodyCollider.bounds.center;
+        
+        Physics.SphereCast(_castOrigin,MoveStats.gyroSphereRadius,Vector3.down,out _sphereCastHit,MoveStats.gyroSphereRadius,MoveStats.GroundLayer);
+        
+
+        if(_sphereCastHit.collider != null)
+        {
+            _isAdjusting = true;
+        }else{_isAdjusting = false;}
+        // Debug.Log("player is Adjusting ="+ _isAdjusting);
     }
 
     #endregion

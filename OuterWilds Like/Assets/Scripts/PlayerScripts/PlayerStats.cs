@@ -31,7 +31,9 @@ public class PlayerStats : ScriptableObject
 
     [Header("Rotation")]
     [Range(-180f,180f)] public float rotationSpeed;
+    [Range(-180f,180f)] public float adjustingSpeed;
     public bool _isRotating;
+    [Range(1f,10f)]public float gyroSphereRadius = 5f;
     
 
     [Header("Debug")]
